@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+   <meta charset="UTF-8">
+   <title>תוצאות חיפוש</title>
+   <style>
+       .location-card {
+           border: 1px solid #ddd;
+           padding: 15px;
+           margin: 10px 0;
+           border-radius: 5px;
+       }
+       .opening-hours {
+           white-space: pre-line;
+       }
+   </style>
+</head>
+<body>
+   <h1>מקומות קרובים לתרומה</h1>
+   {% if locations %}
+       {% for location, distance in locations %}
+           <div class="location-card">
+               <h2>{{ location.name }}</h2>
+               <p>כתובת: {{ location.address }}</p>
+               <p>מרחק: {{ distance|floatformat:1 }} ק"מ</p>
+            <div class="opening-hours">
+                <p>Raw: {{ location.opening_hours }}</p>
+                <p>Formatted: {{ location.format_opening_hours }}</p>
+            </div>
+               {% if location.phone %}
+                   <p>טלפון: {{ location.phone }}</p>
+               {% endif %}
+           </div>
+       {% endfor %}
+   {% else %}
+       <p>לא נמצאו מקומות באזור זה</p>
+   {% endif %}
+</body>
+</html>
+

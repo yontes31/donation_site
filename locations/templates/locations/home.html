@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>אתר תרומות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: right;
+            direction: rtl;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ברוכים הבאים לאתר התרומות שלנו</h1>
+    <p>עזרו לנו לעשות שינוי בקהילה!</p>
+    <a href="{% url 'donation_view' %}" class="button">תרום עכשיו</a>
+</body>
+</html>

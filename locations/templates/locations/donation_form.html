@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>טופס תרומה</title>
+</head>
+<body>
+    <h1>מה תרצי לתרום?</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">שלח</button>
+    </form>
+</body>
+</html>
