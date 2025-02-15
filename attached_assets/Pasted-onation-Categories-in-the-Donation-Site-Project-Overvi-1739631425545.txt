@@ -1,0 +1,56 @@
+onation Categories in the Donation Site Project
+=============================================
+Overview
+--------
+The donation categories system is designed to organize and classify different types of donations in a structured way. It supports both Hebrew and English names, along with searchable keywords.
+Structure
+---------
+Model Definition
+------------------
+The categories are defined in the DonationCategory model (locations/models.py):
+name_hebrew: CharField for Hebrew names (e.g., 'ביגוד')
+name_english: CharField for English names (e.g., 'clothing')
+keywords: TextField for search keywords, comma-separated
+Predefined Categories
+-----------------------
+The system comes with predefined categories:
+ביגוד / Clothing
+מזון / Food
+ריהוט / Furniture
+צעצועים / Toys
+ספרים / Books
+מוצרי חשמל / Electronics
+Management
+------------
+Categories can be managed in three ways:
+1. Through Django Admin (/admin/locations/donationcategory/)
+2. Via management command: python manage.py create_categories
+Programmatically using Django ORM
+Usage in Search
+-----------------
+Each category includes keywords used by the scraper to find relevant donation locations. For example:
+Clothing keywords: "תרומת בגדים, בגדים יד שניה, בגדים משומשים"
+Food keywords: "בנק מזון, תרומות מזון, חלוקת מזון"
+Integration
+-------------
+Categories are used throughout the system:
+In donation forms for users to select donation types
+In location searches to filter relevant places
+In the admin interface for managing donation locations
+Example Usage
+------------
+Creating a new category:
+DonationCategory.objects.create(
+name_hebrew="ביגוד",
+name_english="clothing",
+keywords="תרומת בגדים, בגדים יד שניה"
+)
+Querying locations by category:
+locations = DonationLocation.objects.filter(categories=category)
+Best Practices
+-------------
+Always provide both Hebrew and English names
+Include comprehensive keywords for better search results
+Use the admin interface for manual category management
+Run create_categories command to initialize basic categories
+This system enables efficient organization and searching of donation locations while maintaining bilingual support and flexible categorization.
