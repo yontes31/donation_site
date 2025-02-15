@@ -32,6 +32,9 @@ class DonationLocation(models.Model):
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
 
+    def __str__(self):
+        return self.name
+
 def format_opening_hours(self):
     """
     Formats opening hours data into a human-readable string.

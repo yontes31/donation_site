@@ -46,15 +46,13 @@ def donation_view(request):
                             if distance <= radius:
                                 # Parse opening hours if they exist
                                 try:
-                                    opening_hours = json.loads(loc.opening_hours)
+                                    opening_hours = json.loads(loc.opening_hours) if loc.opening_hours else None
                                 except:
                                     opening_hours = None
                                 
-                                nearby_locations.append({
-                                    'location': loc,
-                                    'distance': distance,
-                                    'opening_hours': opening_hours
-                                })
+                                loc.distance = {'km': distance}
+                                loc.opening_hours = opening_hours
+                                nearby_locations.append(loc)
 
                     # Sort by distance
                     nearby_locations.sort(key=lambda x: x['distance'])
