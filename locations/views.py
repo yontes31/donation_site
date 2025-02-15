@@ -1,3 +1,11 @@
+
+import googlemaps
+import json
+from geopy.distance import geodesic
+from django.shortcuts import render
+from .forms import DonationForm
+from .models import DonationLocation
+
 from django.shortcuts import render
 from locations.models import DonationCategory
 from .forms import DonationForm
@@ -15,40 +23,52 @@ def donation_view(request):
     if request.method == 'POST':
         form = DonationForm(request.POST)
         if form.is_valid():
-            # Process the form data
             category = form.cleaned_data['category']
             radius = form.cleaned_data['radius']
             address = form.cleaned_data['address']
 
-            # Geocode the address
-            geolocator = Nominatim(
-                user_agent="django_app",
-                ssl_context=ssl.create_default_context(cafile=certifi.where())
-            )
-            location = geolocator.geocode(address)
+            # Use Google's Geocoding API
+            gmaps = googlemaps.Client(key='AIzaSyDE1a0ng5gOuW6JPJTML66b9rbe1fSwDxk')
+            try:
+                geocode_result = gmaps.geocode(address)
+                if geocode_result:
+                    location = geocode_result[0]['geometry']['location']
+                    user_coords = (location['lat'], location['lng'])
 
-            if location:
-                user_coords = (location.latitude, location.longitude)
+                    # Find locations within radius that accept the category
+                    locations = DonationLocation.objects.filter(categories=category)
+                    nearby_locations = []
+                    
+                    for loc in locations:
+                        if loc.latitude and loc.longitude:
+                            loc_coords = (loc.latitude, loc.longitude)
+                            distance = geodesic(user_coords, loc_coords).km
+                            if distance <= radius:
+                                # Parse opening hours if they exist
+                                try:
+                                    opening_hours = json.loads(loc.opening_hours)
+                                except:
+                                    opening_hours = None
+                                
+                                nearby_locations.append({
+                                    'location': loc,
+                                    'distance': distance,
+                                    'opening_hours': opening_hours
+                                })
 
-                # Find locations within the radius
-                locations = DonationLocation.objects.all()
-                print("All locations:", locations.values('name', 'latitude', 'longitude'))
-                nearby_locations = []
-                for loc in locations:
-                    print(f"\nLocation {loc.name}:")
-                    print(f"Hours: {loc.opening_hours}")
-                    if loc.latitude and loc.longitude:  # Add this check
-                        loc_coords = (loc.latitude, loc.longitude)
-                        distance = geodesic(user_coords, loc_coords).km
-                        if distance <= radius:
-                         nearby_locations.append((loc, distance))
-
-                # Sort by distance and send to template
-                nearby_locations.sort(key=lambda x: x[1])
-                print(f"Found {len(nearby_locations)} nearby locations")
-                return render(request, 'locations/results.html', {'locations': nearby_locations})
-            else:
-                form.add_error('address', 'כתובת לא חוקית. נסי שוב.')
+                    # Sort by distance
+                    nearby_locations.sort(key=lambda x: x['distance'])
+                    
+                    return render(request, 'locations/results.html', {
+                        'locations': nearby_locations,
+                        'search_address': address,
+                        'radius': radius,
+                        'category': category
+                    })
+                else:
+                    form.add_error('address', 'כתובת לא חוקית. נסי שוב.')
+            except Exception as e:
+                form.add_error('address', 'שגיאה בחיפוש הכתובת. נסי שוב.')
     else:
         form = DonationForm()
 
