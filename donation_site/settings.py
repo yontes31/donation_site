@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'd8e9f260-c247-4d7e-b41a-e1375372725d-00-3raa1o7npxedh.sisko.replit.dev']
 CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://d8e9f260-c247-4d7e-b41a-e1375372725d-00-3raa1o7npxedh.sisko.replit.dev']
+CORS_ALLOW_ALL_ORIGINS = True
+X_FRAME_OPTIONS = 'ALLOW-FROM *'
 
 
 # Application definition
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
