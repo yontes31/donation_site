@@ -64,9 +64,9 @@ def donation_view(request):
                         'category': category
                     })
                 else:
-                    form.add_error('address', 'כתובת לא חוקית. נסי שוב.')
+                    form.add_error('address', 'כתובת לא חוקית. אנא וודאי שהכתובת מכילה רחוב, מספר בית ועיר.')
             except Exception as e:
-                form.add_error('address', 'שגיאה בחיפוש הכתובת. נסי שוב.')
+                form.add_error('address', f'שגיאה בחיפוש הכתובת: {str(e)}. אנא נסי שוב.')
     else:
         form = DonationForm()
 

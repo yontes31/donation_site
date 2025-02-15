@@ -405,7 +405,17 @@
        });
    }
 
-   function hasVoted(locationId) {
+   {% if form.errors %}
+    <div class="error-message">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+function hasVoted(locationId) {
        const votes = JSON.parse(localStorage.getItem('locationVotes') || '{}');
        return votes[locationId] !== undefined;
    }
