@@ -51,11 +51,11 @@ def donation_view(request):
                                     opening_hours = None
                                 
                                 loc.distance = {'km': distance}
-                                loc.opening_hours = opening_hours
+                                loc.opening_hours_formatted = opening_hours
                                 nearby_locations.append(loc)
 
                     # Sort by distance
-                    nearby_locations.sort(key=lambda x: x['distance'])
+                    nearby_locations.sort(key=lambda x: x.distance['km'])
                     
                     return render(request, 'locations/results.html', {
                         'locations': nearby_locations,
