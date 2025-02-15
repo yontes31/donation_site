@@ -78,7 +78,10 @@
             </div>
         </div>
 
-        <a href="{% url 'donation_view' %}" class="donate-button">מצאו מקומות לתרומה</a>
+        <form action="{% url 'donation_view' %}" method="POST" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="donate-button">מצאו מקומות לתרומה</button>
+        </form>
     </div>
 </body>
 </html>
