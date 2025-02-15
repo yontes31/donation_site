@@ -3,6 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <title>תוצאות חיפוש</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
    <style>
        .location-card {
            border: 1px solid #ddd;
@@ -12,29 +13,617 @@
        }
        .opening-hours {
            white-space: pre-line;
+           margin: 5px 0;
+       }
+       .opening-hours-title {
+           font-weight: bold;
+           margin-bottom: 2px;
+       }
+       .phone-number {
+           direction: ltr;
+           unicode-bidi: embed;
+           display: inline-block;
+       }
+       .voting-section {
+           margin-top: 15px;
+           padding-top: 10px;
+           border-top: 1px solid #eee;
+       }
+       .voting-question {
+           margin-bottom: 10px;
+           font-weight: bold;
+       }
+       .voting-buttons {
+           display: flex;
+           gap: 15px;
+       }
+       .vote-btn {
+           background: none;
+           border: none;
+           cursor: pointer;
+           font-size: 1.5em;
+           padding: 5px;
+           transition: all 0.2s;
+           opacity: 0.6;
+       }
+       .vote-btn:hover {
+           transform: scale(1.1);
+           opacity: 1;
+       }
+       .vote-btn.upvote {
+           color: #28a745;
+       }
+       .vote-btn.downvote {
+           color: #dc3545;
+       }
+       .vote-btn.selected {
+           opacity: 1;
+           transform: scale(1.1);
+       }
+       .vote-btn:disabled:not(.selected) {
+           opacity: 0.3;
+           cursor: default;
+           transform: none;
+       }
+       .vote-btn:disabled:hover {
+           transform: none;
+       }
+
+       /* Feedback Box Styles */
+       .feedback-box {
+           position: fixed;
+           border: 2px solid #c6c2be;
+           bottom: 0;
+           left: 2em;
+           margin: 0;
+           width: 16em;
+           text-align: right;
+           padding: 0.5em 1.5em 0.5em 0.75em;
+           z-index: 1000;
+           border-radius: 5px;
+           border-bottom-left-radius: 0;
+           border-bottom-right-radius: 0;
+           border-bottom: 0;
+           background: #fff;
+           cursor: pointer;
+           color: #c6c2be;
+           direction: rtl;
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+           font-size: 16px;
+       }
+
+       .feedback-box * {
+           display: none;
+           box-sizing: border-box;
+           font-family: inherit;
+           font-size: inherit;
+       }
+
+       .feedback-box .expand-icon {
+           background: #333;
+           position: absolute;
+           top: 50%;
+           left: 0.85em;
+           transform: translateY(-50%);
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           width: 32px;
+           height: 32px;
+           border-radius: 4px;
+       }
+
+       .feedback-box .expand-icon i {
+           color: white;
+           font-size: 16px;
+       }
+
+       .feedback-box.expanded .expand-icon i {
+           transform: rotate(180deg);
+       }
+
+       .feedback-box .title {
+           display: block;
+           color: #c6c2be;
+           font-weight: bold;
+           font-size: 18px;
+           margin-left: 3.2em;
+           line-height: 1.2;
+       }
+
+       .feedback-box.expanded .title {
+           color: #353535;
+       }
+
+       .feedback-box .title:hover {
+           text-decoration: underline;
+       }
+
+       .feedback-box.expanded * {
+           display: block;
+       }
+
+       .feedback-box.expanded {
+           cursor: default;
+           min-height: 18em;
+       }
+
+       .feedback-box .text {
+           margin-top: 15px;
+           margin-bottom: 5px;
+           font-size: 16px;
+       }
+
+       .feedback-box input,
+       .feedback-box textarea {
+           width: 100%;
+           border: 1px solid #e4e4e4;
+           padding: 4px 8px;
+           margin-bottom: 5px;
+           font-size: 16px;
+           border-radius: 5px;
+           box-shadow: none;
+           font-weight: normal;
+           outline: none;
+           direction: rtl;
+           text-align: right;
+           font-family: inherit;
+       }
+
+       .feedback-box textarea {
+           min-height: 7em;
+       }
+
+       .feedback-box .button {
+           float: left;
+           font-weight: bold;
+           padding: 0.25em 0.75em;
+           border-radius: 5px;
+           background: #ff4742;
+           border: 2px solid #ff4742;
+           color: #fff;
+           margin-top: 5px;
+           text-transform: none;
+           cursor: pointer;
+           font-size: 16px;
+           font-family: inherit;
+       }
+
+       .feedback-box .button:hover {
+           color: #ff4742;
+           background: none;
+       }
+
+       .feedback-box .success-text {
+           font-size: 16px;
+           margin-top: 15px;
+           display: none;
+           font-family: inherit;
+       }
+
+       .feedback-box.success * {
+           display: none;
+       }
+
+       .feedback-box.success .expand-icon,
+       .feedback-box.success .title,
+       .feedback-box.success .success-text {
+           display: block;
+       }
+
+       .feedback-box:not(.expanded) .success-text {
+           display: none;
+       }
+
+       @media (max-width: 600px) {
+           .feedback-box {
+               display: none;
+           }
+       }
+
+       /* Newsletter Styles */
+       .newsletter-container {
+           background-color: #f8f9fa;
+           padding: 20px;
+           text-align: center;
+           margin-bottom: 20px;
+           border-radius: 8px;
+           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+       }
+
+       .newsletter-form {
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           gap: 10px;
+           max-width: 600px;
+           margin: 10px auto;
+       }
+
+       .newsletter-input {
+           padding: 8px 12px;
+           border: 1px solid #ddd;
+           border-radius: 4px;
+           width: 300px;
+           font-size: 16px;
+           direction: rtl;
+       }
+
+       .newsletter-button {
+           padding: 8px 20px;
+           background-color: #28a745;
+           color: white;
+           border: none;
+           border-radius: 4px;
+           cursor: pointer;
+           font-size: 16px;
+           transition: background-color 0.3s;
+       }
+
+       .newsletter-button:hover {
+           background-color: #218838;
+       }
+
+       .newsletter-success {
+           color: #28a745;
+           display: none;
+           margin-top: 10px;
+       }
+
+       .newsletter-error {
+           color: #dc3545;
+           display: none;
+           margin-top: 10px;
        }
    </style>
 </head>
 <body>
-   <h1>מקומות קרובים לתרומה</h1>
+   <div class="newsletter-container">
+       <h3>תשלח לי הודעה כאשר נפתח מקום חדש לתרומות בסביבה שלי</h3>
+       <form class="newsletter-form" id="newsletter-form">
+           <input type="email" class="newsletter-input" placeholder="האימייל שלך" required>
+           <button type="submit" class="newsletter-button">הרשמה לעדכונים</button>
+       </form>
+       <div class="newsletter-success">נרשמת בהצלחה! 🎉</div>
+       <div class="newsletter-error">אופס! משהו השתבש... אפשר לנסות שוב?</div>
+   </div>
+
+   {% if not locations %}
+   <!-- Show form only if there are no results -->
+   <form method="POST">
+       {% csrf_token %}
+       {{ form.as_p }}
+       <button type="submit">חפש מיקומים</button>
+   </form>
+   {% endif %}
+
    {% if locations %}
-       {% for location, distance in locations %}
-           <div class="location-card">
+       <h1>מקומות קרובים לתרומה</h1>
+       {% for location in locations %}
+           <div class="location-card" data-location-id="{{ location.id }}">
                <h2>{{ location.name }}</h2>
                <p>כתובת: {{ location.address }}</p>
-               <p>מרחק: {{ distance|floatformat:1 }} ק"מ</p>
-            <div class="opening-hours">
-                <p>Raw: {{ location.opening_hours }}</p>
-                <p>Formatted: {{ location.format_opening_hours }}</p>
-            </div>
-               {% if location.phone %}
-                   <p>טלפון: {{ location.phone }}</p>
+               {% if location.distance %}
+                   <p>מרחק: {{ location.distance.km|floatformat:1 }} ק"מ</p>
                {% endif %}
+               {% if location.opening_hours %}
+                   <div class="opening-hours">
+                       <div class="opening-hours-title">שעות פתיחה:</div>
+                       {% if location.opening_hours.weekday_text %}
+                           {% for day in location.opening_hours.weekday_text %}
+                               <div>{{ day }}</div>
+                           {% endfor %}
+                       {% else %}
+                           <div>שעות פתיחה לא זמינות</div>
+                       {% endif %}
+                   </div>
+               {% else %}
+                   <div class="opening-hours">
+                       <div class="opening-hours-title">שעות פתיחה:</div>
+                       <div>שעות פתיחה לא זמינות</div>
+                   </div>
+               {% endif %}
+               {% if location.phone %}
+                   <p>טלפון: <span class="phone-number">0{{ location.phone|slice:"4:"|cut:" " }}</span></p>
+               {% endif %}
+               {% if location.website %}
+                   <p>אתר: <a href="{{ location.website }}" target="_blank">{{ location.website }}</a></p>
+               {% endif %}
+               
+               <div class="voting-section">
+                   <div class="voting-question">האם המקום תואם את תוצאות החיפוש שלך?</div>
+                   <div class="voting-buttons">
+                       <button class="vote-btn upvote" onclick="vote({{ location.id }}, 'up')" data-location="{{ location.id }}">
+                           <i class="fas fa-thumbs-up"></i>
+                       </button>
+                       <button class="vote-btn downvote" onclick="vote({{ location.id }}, 'down')" data-location="{{ location.id }}">
+                           <i class="fas fa-thumbs-down"></i>
+                       </button>
+                   </div>
+               </div>
            </div>
        {% endfor %}
    {% else %}
        <p>לא נמצאו מקומות באזור זה</p>
    {% endif %}
+
+   <div class="feedback-box">
+       <span class="title">רוצות לדבר?</span>
+       <div class="expand-icon">
+           <i class="far fa-square"></i>
+       </div>
+       <span class="text">יש משהו על הלב?</span>
+       <span class="success-text">איזה יופי! נדבר בקרוב 😊</span>
+       <input type="text" placeholder="איך קוראים לך?" class="name" />
+       <input type="email" placeholder="מה המייל שלך?" class="email" />
+       <textarea placeholder="יאללה לשתף!" class="message"></textarea>
+       <div class="button send-feedback">קדימה!</div>
+   </div>
+
+   <script>
+   let currentFeedbackLocationId = null;
+   let currentFeedbackVoteType = null;
+
+   function showFeedbackPopup(locationId, voteType) {
+       currentFeedbackLocationId = locationId;
+       currentFeedbackVoteType = voteType;
+       document.getElementById('feedback-popup').style.display = 'block';
+   }
+
+   function hideFeedbackPopup() {
+       document.getElementById('feedback-popup').style.display = 'none';
+       document.getElementById('feedback-message').value = '';
+       currentFeedbackLocationId = null;
+       currentFeedbackVoteType = null;
+   }
+
+   function submitFeedback() {
+       const message = document.getElementById('feedback-message').value;
+       
+       fetch('/feedback/', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               message: message,
+               location_id: currentFeedbackLocationId,
+               vote_type: currentFeedbackVoteType
+           })
+       })
+       .then(response => response.json())
+       .then(data => {
+           if (data.status === 'success') {
+               hideFeedbackPopup();
+           } else {
+               alert('אופס! שכחת למלא את כל הפרטים');
+           }
+       })
+       .catch(error => {
+           console.error('Error:', error);
+           alert('אופס! משהו השתבש בדרך... אפשר לנסות שוב?');
+       });
+   }
+
+   function hasVoted(locationId) {
+       const votes = JSON.parse(localStorage.getItem('locationVotes') || '{}');
+       return votes[locationId] !== undefined;
+   }
+
+   function getVoteType(locationId) {
+       const votes = JSON.parse(localStorage.getItem('locationVotes') || '{}');
+       return votes[locationId];
+   }
+
+   function disableVoteButtons(locationId, selectedType) {
+       const upvoteBtn = document.querySelector(`.vote-btn.upvote[data-location="${locationId}"]`);
+       const downvoteBtn = document.querySelector(`.vote-btn.downvote[data-location="${locationId}"]`);
+       
+       if (upvoteBtn) {
+           upvoteBtn.disabled = true;
+           if (selectedType === 'up') {
+               upvoteBtn.classList.add('selected');
+           }
+       }
+       if (downvoteBtn) {
+           downvoteBtn.disabled = true;
+           if (selectedType === 'down') {
+               downvoteBtn.classList.add('selected');
+           }
+       }
+   }
+
+   function vote(locationId, voteType) {
+       if (hasVoted(locationId)) {
+           alert('כבר הצבעת עבור מיקום זה');
+           return;
+       }
+
+       fetch('/vote/', {
+           method: 'POST',
+           body: new URLSearchParams({
+               'location_id': locationId,
+               'vote_type': voteType
+           })
+       })
+       .then(response => response.json())
+       .then(data => {
+           if (data.status === 'success') {
+               // Save vote to localStorage
+               const votes = JSON.parse(localStorage.getItem('locationVotes') || '{}');
+               votes[locationId] = voteType;
+               localStorage.setItem('locationVotes', JSON.stringify(votes));
+               
+               // Disable vote buttons and highlight selection
+               disableVoteButtons(locationId, voteType);
+
+               // Show feedback popup
+               showFeedbackPopup(locationId, voteType);
+           } else {
+               alert('אופס! משהו לא תקין בדרך... אפשר לנסות שוב?');
+           }
+       })
+       .catch(error => {
+           console.error('Error:', error);
+           alert('אופס! משהו השתבש בדרך... אפשר לנסות שוב?');
+       });
+   }
+
+   // Initialize vote buttons state on page load
+   document.addEventListener('DOMContentLoaded', function() {
+       const locationCards = document.querySelectorAll('.location-card');
+       locationCards.forEach(card => {
+           const locationId = card.getAttribute('data-location-id');
+           if (hasVoted(locationId)) {
+               const voteType = getVoteType(locationId);
+               disableVoteButtons(locationId, voteType);
+           }
+       });
+
+       // Add feedback popup event listeners
+       document.querySelector('.feedback-close').addEventListener('click', hideFeedbackPopup);
+       document.querySelector('.feedback-cancel').addEventListener('click', hideFeedbackPopup);
+       document.querySelector('.feedback-submit').addEventListener('click', submitFeedback);
+   });
+
+   // Feedback Box Functionality
+   document.addEventListener('DOMContentLoaded', function() {
+       const feedbackBox = document.querySelector('.feedback-box');
+       const title = feedbackBox.querySelector('.title');
+       const expandIcon = feedbackBox.querySelector('.expand-icon');
+
+       function toggleFeedbackBox() {
+           feedbackBox.classList.toggle('expanded');
+           if (feedbackBox.classList.contains('expanded')) {
+               feedbackBox.classList.remove('success');
+               feedbackBox.querySelectorAll('input').forEach(input => input.value = '');
+               feedbackBox.querySelector('textarea').value = '';
+               expandIcon.querySelector('i').classList.remove('fa-square');
+               expandIcon.querySelector('i').classList.add('fa-check-square');
+           } else {
+               feedbackBox.querySelectorAll('input').forEach(input => input.value = '');
+               feedbackBox.querySelector('textarea').value = '';
+               feedbackBox.classList.remove('success');
+               expandIcon.querySelector('i').classList.add('fa-square');
+               expandIcon.querySelector('i').classList.remove('fa-check-square');
+           }
+       }
+
+       title.addEventListener('click', function(e) {
+           toggleFeedbackBox();
+           e.stopPropagation();
+           e.preventDefault();
+       });
+
+       feedbackBox.addEventListener('click', function(e) {
+           if (!this.classList.contains('expanded')) {
+               toggleFeedbackBox();
+           }
+       });
+
+       expandIcon.addEventListener('click', function(e) {
+           toggleFeedbackBox();
+           e.stopPropagation();
+           e.preventDefault();
+       });
+
+       const sendButton = feedbackBox.querySelector('.send-feedback');
+       sendButton.addEventListener('click', function() {
+           const nameInput = feedbackBox.querySelector('.name');
+           const emailInput = feedbackBox.querySelector('.email');
+           const messageInput = feedbackBox.querySelector('.message');
+
+           if (nameInput.value.trim() === '' || emailInput.value.trim() === '') {
+               alert('אנא מלאו את כל השדות');
+               return;
+           }
+
+           if (!validateEmail(emailInput.value)) {
+               alert('אופס! משהו לא תקין במייל');
+               return;
+           }
+
+           fetch('/feedback/', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json',
+               },
+               body: JSON.stringify({
+                   name: nameInput.value,
+                   email: emailInput.value,
+                   message: messageInput.value
+               })
+           })
+           .then(response => response.json())
+           .then(data => {
+               if (data.status === 'success') {
+                   feedbackBox.classList.add('success');
+               } else {
+                   alert('אופס! משהו השתבש בדרך... אפשר לנסות שוב?');
+               }
+           })
+           .catch(error => {
+               console.error('Error:', error);
+               alert('אופס! משהו השתבש בדרך... אפשר לנסות שוב?');
+           });
+       });
+   });
+
+   function validateEmail(email) {
+       const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+       return re.test(email);
+   }
+
+   // Add this before the existing scripts
+   document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+       e.preventDefault();
+       
+       const email = this.querySelector('input[type="email"]').value;
+       
+       // Mailchimp API endpoint (we'll set this up in the backend)
+       fetch('/subscribe/', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               email: email
+           })
+       })
+       .then(response => response.json())
+       .then(data => {
+           const successMsg = document.querySelector('.newsletter-success');
+           const errorMsg = document.querySelector('.newsletter-error');
+           
+           if (data.status === 'success') {
+               successMsg.style.display = 'block';
+               errorMsg.style.display = 'none';
+               this.reset();
+           } else {
+               successMsg.style.display = 'none';
+               errorMsg.style.display = 'block';
+           }
+       })
+       .catch(error => {
+           console.error('Error:', error);
+           document.querySelector('.newsletter-success').style.display = 'none';
+           document.querySelector('.newsletter-error').style.display = 'block';
+       });
+   });
+   </script>
+
+   <!-- Include feedback popup -->
+   <script src="/feedback-popup.php?action=feedback-popup-as-js"></script>
 </body>
 </html>
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDE1a0ng5gOuW6JPJTML66b9rbe1fSwDxk&libraries=places&language=he"></script>
+<script>
+  // Activate autocomplete for the address input field
+  const addressInput = document.querySelector('input[name="address"]');
+  if (addressInput) {  // Only initialize if the input exists
+    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+      componentRestrictions: { country: 'il' },  // Restrict to Israel
+      fields: ['formatted_address', 'geometry']
+    });
+  }
+</script>
