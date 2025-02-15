@@ -1,3 +1,4 @@
+
 from django.core.management.base import BaseCommand
 from locations.models import DonationCategory
 
@@ -9,12 +10,12 @@ class Command(BaseCommand):
             {
                 'name_hebrew': 'ביגוד',
                 'name_english': 'clothing',
-                'keywords': 'בגדים יד שניה, חנות בגדים משומשים, תרומות בגדים'
+                'keywords': 'תרומת בגדים, בגדים יד שניה, בגדים משומשים'
             },
             {
                 'name_hebrew': 'מזון',
                 'name_english': 'food',
-                'keywords': 'בנק מזון, תרומות מזון, חבילות מזון'
+                'keywords': 'בנק מזון, תרומות מזון, חלוקת מזון'
             },
             {
                 'name_hebrew': 'ריהוט',
@@ -30,6 +31,11 @@ class Command(BaseCommand):
                 'name_hebrew': 'ספרים',
                 'name_english': 'books',
                 'keywords': 'ספרים יד שניה, תרומות ספרים, ספריה'
+            },
+            {
+                'name_hebrew': 'מוצרי חשמל',
+                'name_english': 'electronics',
+                'keywords': 'מוצרי חשמל יד שניה, תרומות מוצרי חשמל'
             }
         ]
 
