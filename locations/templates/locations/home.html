@@ -1,27 +1,84 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>אתר תרומות</title>
+    <title>אתר תרומות ישראל</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: right;
-            direction: rtl;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            text-align: center;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
         }
-        .button {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .donate-button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #4CAF50;
+            padding: 15px 40px;
+            background-color: #27ae60;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .donate-button:hover {
+            background-color: #219a52;
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        .feature {
+            flex-basis: 250px;
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <h1>ברוכים הבאים לאתר התרומות שלנו</h1>
-    <p>עזרו לנו לעשות שינוי בקהילה!</p>
-    <a href="{% url 'donation_view' %}" class="button">תרום עכשיו</a>
+    <div class="container">
+        <h1>ברוכים הבאים לאתר התרומות של ישראל</h1>
+        <p class="subtitle">מחברים בין אנשים טובים לבין מקומות שזקוקים לתרומות</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>פשוט וקל</h3>
+                <p>תהליך התרומה פשוט ומהיר - תוך דקות תמצאו את המקום המתאים</p>
+            </div>
+            <div class="feature">
+                <h3>קרוב לבית</h3>
+                <p>נמצא לכם מקומות קרובים למיקום שלכם</p>
+            </div>
+            <div class="feature">
+                <h3>עושים טוב</h3>
+                <p>עוזרים לקהילה ולסביבה על ידי תרומת פריטים שאינם בשימוש</p>
+            </div>
+        </div>
+
+        <a href="{% url 'donation_view' %}" class="donate-button">התחילו לתרום</a>
+    </div>
 </body>
 </html>
