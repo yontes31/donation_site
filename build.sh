@@ -2,9 +2,6 @@
 # exit on error
 set -o errexit
 
-# Install Pillow first
-pip install Pillow
-
 # Install Python dependencies
 pip install -r requirements.txt
 
@@ -12,4 +9,4 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 
 # Run migrations
-python manage.py migrate 
+python manage.py migrate
