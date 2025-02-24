@@ -3,7 +3,7 @@
 set -o errexit
 
 # Install Pillow first
-pip install --no-cache-dir Pillow==11.1.0
+pip install Pillow
 
 # Install Python dependencies
 pip install -r requirements.txt
