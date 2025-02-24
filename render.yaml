@@ -15,22 +15,6 @@ services:
         generateValue: true
       - key: DJANGO_DEBUG
         value: false
-      - key: EMAIL_HOST_USER
-        value: yoni31891@gmail.com
-      - key: EMAIL_HOST_PASSWORD
-        value: txrz hwhp farh ayuv
-      - key: DEFAULT_FROM_EMAIL
-        value: yoni31891@gmail.com
-      - key: ADMIN_EMAIL
-        value: yoni31891@gmail.com
-      - key: GOOGLE_MAPS_API_KEY
-        value: AIzaSyDE1a0ng5gOuW6JPJTML66b9rbe1fSwDxk
-      - key: BREVO_API_KEY
-        value: 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
-      - key: BREVO_LIST_ID
-        value: 2
-      - key: GOOGLE_ANALYTICS_ID
-        value: G-EWBWQP7K62
       - key: WEB_CONCURRENCY
         value: 4
     buildFilter:
