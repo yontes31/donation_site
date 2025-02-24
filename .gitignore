@@ -1,0 +1,34 @@
+# Dependencies
+node_modules
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Database
+db.sqlite3
+
+# Django stuff
+*.log
+local_settings.py
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Next.js
+.next/
+out/

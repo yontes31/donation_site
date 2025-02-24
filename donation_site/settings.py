@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w+lr4#nngxt8%p!^$$a-rfwz!5+dt@!ub=2i*2znh_dilg$!s3'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*', 'd8e9f260-c247-4d7e-b41a-e1375372725d-00-3raa1o7npxedh.sisko.replit.dev']
 CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://d8e9f260-c247-4d7e-b41a-e1375372725d-00-3raa1o7npxedh.sisko.replit.dev']
@@ -132,4 +133,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GOOGLE_MAPS_API_KEY = 'AIzaSyDE1a0ng5gOuW6JPJTML66b9rbe1fSwDxk'
+# Google Maps API Key
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')

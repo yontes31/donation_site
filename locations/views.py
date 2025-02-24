@@ -1,10 +1,10 @@
-
 import googlemaps
 import json
 from geopy.distance import geodesic
 from django.shortcuts import render
 from .forms import DonationForm
 from .models import DonationLocation
+from django.conf import settings
 
 from django.shortcuts import render
 from locations.models import DonationCategory
@@ -28,7 +28,7 @@ def donation_view(request):
             address = form.cleaned_data['address']
 
             # Use Google's Geocoding API
-            gmaps = googlemaps.Client(key='AIzaSyDE1a0ng5gOuW6JPJTML66b9rbe1fSwDxk')
+            gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
             try:
                 geocode_result = gmaps.geocode(address)
                 if geocode_result:
