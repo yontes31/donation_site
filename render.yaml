@@ -22,9 +22,9 @@ services:
       - key: BREVO_API_KEY
         sync: false
       - key: BREVO_LIST_ID
-        value: "2"
+        sync: false
       - key: GOOGLE_ANALYTICS_ID
-        value: "G-EWBWQP7K62"
+        sync: false
       - key: EMAIL_HOST_USER
         sync: false
       - key: EMAIL_HOST_PASSWORD
