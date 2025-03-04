@@ -5,6 +5,9 @@ from django.shortcuts import render
 from .forms import DonationForm
 from .models import DonationLocation
 from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from django.shortcuts import render
 from locations.models import DonationCategory
@@ -19,8 +22,85 @@ from .forms import CreatePosts
 from django.shortcuts import redirect
 
 
+@csrf_exempt
 def donation_view(request):
     if request.method == 'POST':
+        # Check if this is an API request
+        is_api_request = request.path.startswith('/api/')
+        
+        # For API requests, get data from JSON
+        if is_api_request:
+            try:
+                data = json.loads(request.body)
+                category_id = data.get('category')
+                radius = float(data.get('radius', 5))
+                address = data.get('address', '')
+                
+                category = DonationCategory.objects.get(id=category_id)
+                
+                # Use Google's Geocoding API
+                gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
+                try:
+                    geocode_result = gmaps.geocode(address)
+                    if geocode_result:
+                        location = geocode_result[0]['geometry']['location']
+                        user_coords = (location['lat'], location['lng'])
+
+                        # Find locations within radius that accept the category
+                        locations = DonationLocation.objects.filter(categories=category)
+                        nearby_locations = []
+                        
+                        for loc in locations:
+                            if loc.latitude and loc.longitude:
+                                loc_coords = (loc.latitude, loc.longitude)
+                                distance = geodesic(user_coords, loc_coords).km
+                                if distance <= radius:
+                                    # Parse opening hours if they exist
+                                    try:
+                                        opening_hours = json.loads(loc.opening_hours) if loc.opening_hours else None
+                                    except:
+                                        opening_hours = None
+                                    
+                                    nearby_locations.append({
+                                        'id': loc.id,
+                                        'name': loc.name,
+                                        'address': loc.address,
+                                        'distance': distance,
+                                        'latitude': loc.latitude,
+                                        'longitude': loc.longitude,
+                                        'phone': loc.phone,
+                                        'website': loc.website,
+                                        'opening_hours': opening_hours
+                                    })
+
+                        # Sort by distance
+                        nearby_locations.sort(key=lambda x: x['distance'])
+                        
+                        return JsonResponse({
+                            'status': 'success',
+                            'locations': nearby_locations,
+                            'search_address': address,
+                            'radius': radius,
+                            'category': category.name
+                        })
+                    else:
+                        return JsonResponse({
+                            'status': 'error',
+                            'error': 'כתובת לא חוקית. אנא וודאי שהכתובת מכילה רחוב, מספר בית ועיר.'
+                        }, status=400)
+                except Exception as e:
+                    return JsonResponse({
+                        'status': 'error',
+                        'error': f'שגיאה בחיפוש הכתובת: {str(e)}. אנא נסי שוב.'
+                    }, status=500)
+                    
+            except Exception as e:
+                return JsonResponse({
+                    'status': 'error',
+                    'error': f'שגיאה בעיבוד הבקשה: {str(e)}'
+                }, status=400)
+        
+        # For regular form submissions, continue with existing code
         form = DonationForm(request.POST)
         if form.is_valid():
             category = form.cleaned_data['category']

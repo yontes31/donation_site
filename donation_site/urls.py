@@ -25,4 +25,5 @@ urlpatterns = [
     path('', views.home, name='home'),  # Add this line for the home page
     path('donate/', views.donation_view, name='donation_view'),
     path('create-post/', views.create_post_view, name='create_post_view'),
+    path('api/donation/search/', views.donation_view, name='api_donation_search'),  # Add API endpoint
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
