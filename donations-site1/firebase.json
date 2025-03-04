@@ -1,6 +1,8 @@
 {
   "hosting": {
-    "public": ".next",
+    "public": "out",
+    "cleanUrls": true,
+    "trailingSlash": true,
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -8,8 +10,8 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/api/**",
+        "destination": "https://donation-site-backend.onrender.com/api/:splat"
       }
     ]
   }
