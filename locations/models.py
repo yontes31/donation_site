@@ -31,9 +31,21 @@ class DonationLocation(models.Model):
     last_updated = models.DateTimeField(auto_now=True, verbose_name="עודכן לאחרונה")
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
+    upvotes = models.IntegerField(default=0, verbose_name="הצבעות חיוביות")
+    downvotes = models.IntegerField(default=0, verbose_name="הצבעות שליליות")
 
     def __str__(self):
         return self.name
+
+    @property
+    def score(self):
+        """Calculate the score (upvotes - downvotes)"""
+        return self.upvotes - self.downvotes
+
+    @property
+    def total_votes(self):
+        """Calculate the total number of votes"""
+        return self.upvotes + self.downvotes
 
 def format_opening_hours(self):
     """

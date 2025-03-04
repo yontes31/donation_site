@@ -165,3 +165,71 @@ def create_post_view(request):
     else:
         form = CreatePosts()
     return render(request, 'locations/create_post.html', {'form': form})
+
+@csrf_exempt
+def vote_location(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            location_id = data.get('location_id')
+            vote_type = data.get('vote_type')
+            feedback = data.get('feedback', '')
+            
+            if not location_id:
+                return JsonResponse({
+                    'status': 'error',
+                    'error': 'Missing location_id'
+                }, status=400)
+            
+            if vote_type not in ['up', 'down']:
+                return JsonResponse({
+                    'status': 'error',
+                    'error': 'Invalid vote_type. Must be "up" or "down"'
+                }, status=400)
+            
+            # Get the location
+            try:
+                location = DonationLocation.objects.get(id=location_id)
+            except DonationLocation.DoesNotExist:
+                return JsonResponse({
+                    'status': 'error',
+                    'error': 'Location not found'
+                }, status=404)
+            
+            # Process the vote
+            if vote_type == 'up':
+                location.upvotes += 1
+            else:  # vote_type == 'down'
+                location.downvotes += 1
+            
+            location.save()
+            
+            # Store feedback if provided
+            if feedback:
+                # Simply log it for now
+                print(f"Feedback for location {location_id}: {feedback}")
+            
+            return JsonResponse({
+                'status': 'success',
+                'upvotes': location.upvotes,
+                'downvotes': location.downvotes,
+                'score': location.score,
+                'total_votes': location.total_votes
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'status': 'error',
+                'error': 'Invalid JSON in request body'
+            }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'error': f'Error processing vote: {str(e)}'
+            }, status=500)
+    
+    # Handle non-POST requests
+    return JsonResponse({
+        'status': 'error',
+        'error': 'Method not allowed'
+    }, status=405)
